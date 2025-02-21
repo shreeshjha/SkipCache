@@ -13,8 +13,13 @@ MULTI_OBJS = $(MULTI_SOURCES:.cpp=.o)
 SKIP_SOURCES = extended_benchmark.cpp cache_simulator.cpp multi_level_cache.cpp persistent_data_structure.cpp
 SKIP_OBJS = $(SKIP_SOURCES:.cpp=.o)
 
-all: benchmark multicore_simulation skipcache_advanced
+# 4) unified_sim (single CLI with multiple modes)
+UNIFIED_SOURCES = unified_main.cpp cache_simulator.cpp multi_level_cache.cpp persistent_data_structure.cpp
+UNIFIED_OBJS = $(UNIFIED_SOURCES:.cpp=.o)
 
+all: benchmark multicore_simulation skipcache_advanced unified_sim
+
+# Original three targets
 benchmark: $(BENCH_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(BENCH_OBJS)
 
@@ -24,9 +29,15 @@ multicore_simulation: $(MULTI_OBJS)
 skipcache_advanced: $(SKIP_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(SKIP_OBJS)
 
+# New unified_sim target
+unified_sim: $(UNIFIED_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(UNIFIED_OBJS)
+
+# Generic rule to build object files
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Run all three original executables plus the new unified CLI
 run_all: all
 	@echo "\n=== Running benchmark ==="
 	./benchmark
@@ -34,8 +45,15 @@ run_all: all
 	./multicore_simulation
 	@echo "\n=== Running skipcache_advanced ==="
 	./skipcache_advanced
+	@echo "\n=== Running unified_sim in all modes ==="
+	@echo " - benchmark mode"
+	./unified_sim benchmark
+	@echo "\n - multi mode"
+	./unified_sim multi
+	@echo "\n - skipcache mode"
+	./unified_sim skipcache
 
 clean:
-	rm -f benchmark multicore_simulation skipcache_advanced \
-	      $(BENCH_OBJS) $(MULTI_OBJS) $(SKIP_OBJS)
+	rm -f benchmark multicore_simulation skipcache_advanced unified_sim \
+	      $(BENCH_OBJS) $(MULTI_OBJS) $(SKIP_OBJS) $(UNIFIED_OBJS)
 
