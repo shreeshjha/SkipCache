@@ -28,20 +28,23 @@ This project simulates various cache control and flush optimizations inspired by
   - A `run_all` target executes all simulations sequentially.
 
 ## Project Structure
-├── cache_simulator.cpp          # Implementation of the CacheSimulator class
-├── cache_simulator.hpp         # CacheSimulator declaration and supporting types
-├── persistent_data_structure.cpp # Implementation of the PersistentCounter class
-├── persistent_data_structure.hpp # PersistentCounter declaration
-├── multi_level_cache.cpp       # Implementation of the L2Cache class
-├── multi_level_cache.hpp      # L2Cache declaration
-├── benchmark.cpp              # Benchmark simulation main (standalone)
-├── multi_core_simulation.cpp  # Multi-core simulation main (standalone)
-├── extended_benchmark.cpp     # SkipCache advanced simulation main (standalone)
-├── unified_main.cpp          # Unified CLI main (select simulation mode via command-line)
-├── config.hpp                # Configuration loader using nlohmann/json (header-only)
-├── logger.hpp                # Simple logging facility (header-only)
-├── json.hpp                  # Single-header JSON library (nlohmann/json)
-└── Makefile                  # Build script for all targets and run_all
+```text
+.
+├── cache_simulator.cpp            # Implementation of the CacheSimulator class
+├── cache_simulator.hpp            # CacheSimulator declaration and supporting types
+├── persistent_data_structure.cpp  # Implementation of the PersistentCounter class
+├── persistent_data_structure.hpp  # PersistentCounter declaration
+├── multi_level_cache.cpp          # Implementation of the L2Cache class
+├── multi_level_cache.hpp          # L2Cache declaration
+├── benchmark.cpp                  # Benchmark simulation main (standalone)
+├── multi_core_simulation.cpp      # Multi-core simulation main (standalone)
+├── extended_benchmark.cpp         # SkipCache advanced simulation main (standalone)
+├── unified_main.cpp               # Unified CLI main (select simulation mode via command-line)
+├── config.hpp                     # Configuration loader using nlohmann/json (header-only)
+├── logger.hpp                     # Simple logging facility (header-only)
+├── json.hpp                       # Single-header JSON library (nlohmann/json)
+└── Makefile                       # Build script for all targets and run_all
+```
 
 ## Requirements
 
