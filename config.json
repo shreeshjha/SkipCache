@@ -1,0 +1,11 @@
+{
+  "l1Size": 1024,
+  "l2Size": 1024,
+  "flushLatency": 100,
+  "cleanLatency": 50,
+  "readLatency": 10,
+  "numThreads": 4,
+  "numCores": 2,
+  "simulationDuration": 200
+}
+
