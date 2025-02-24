@@ -1,0 +1,65 @@
+# -------------------------------------------------------------------
+# Compiled object files and libraries
+# -------------------------------------------------------------------
+*.o
+*.lo
+*.la
+*.al
+*.obj
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+
+# -------------------------------------------------------------------
+# Executable files
+# -------------------------------------------------------------------
+*.exe
+*.out
+*.app
+
+# If your build process produces named binaries in the repo folder,
+# you can explicitly list them (e.g. "benchmark", "cache_simulator", etc.)
+benchmark
+cache_simulator
+extended_benchmark
+multi_core_benchmark
+multi_level_cache
+persistent_data_structure
+
+# -------------------------------------------------------------------
+# Logs and temporary files
+# -------------------------------------------------------------------
+*.log
+*.tmp
+
+# -------------------------------------------------------------------
+# Build folders (e.g., Make, CMake, etc.)
+# -------------------------------------------------------------------
+build/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# -------------------------------------------------------------------
+# IDE or editor directories and files
+# -------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sln
+*.vcxproj*
+*.user
+*.DS_Store
+
+# -------------------------------------------------------------------
+# Other files or folders you do not want to track
+# (Uncomment or add lines as necessary)
+# -------------------------------------------------------------------
+# config.json
+# *.env
+# coverage/
+
