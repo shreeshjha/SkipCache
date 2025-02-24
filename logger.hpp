@@ -1,31 +1,16 @@
-#pragma once
-#include <fstream>
-#include <mutex>
-#include <chrono>
-#include <string>
-#include <sstream>
-#include <ctime>
+#include "ReadableFlexibleLogger.hpp"
+#include <iostream>
 
-class Logger {
-public:
-    Logger(const std::string &filename) {
-        out.open(filename, std::ios::out);
+int main() {
+    try {
+        ReadableFlexibleLogger logger("persistent_readable_log.txt");
+        logger.log("User login event");
+        logger.log("Transaction committed");
+        logger.log("Error encountered during processing");
+        std::cout << "Enhanced, human-readable logging completed." << std::endl;
+    } catch(const std::exception &ex) {
+        std::cerr << "Error: " << ex.what() << std::endl;
+        return 1;
     }
-    ~Logger() {
-        if (out.is_open()) {
-            out.close();
-        }
-    }
-    void log(const std::string &event) {
-        std::lock_guard<std::mutex> lock(logMutex);
-        auto now = std::chrono::system_clock::now();
-        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
-        std::stringstream ss;
-        ss << std::ctime(&nowTime) << ": " << event << "\n";
-        out << ss.str();
-    }
-private:
-    std::ofstream out;
-    std::mutex logMutex;
-};
-
+    return 0;
+}

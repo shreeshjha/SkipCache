@@ -2,7 +2,7 @@
 #include "multi_level_cache.hpp"
 #include "persistent_data_structure.hpp"
 #include "config.hpp"
-#include "logger.hpp"
+#include "ReadableFlexibleLogger.hpp"
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -10,7 +10,7 @@
 #include <memory>
 
 // Core simulation: each core uses its own L1 cache and a shared L2 cache.
-void coreSimulation(int coreId, CacheSimulator &l1Cache, L2Cache &l2Cache, const Config &cfg, Logger &logger) {
+void coreSimulation(int coreId, CacheSimulator &l1Cache, L2Cache &l2Cache, const Config &cfg, ReadableFlexibleLogger &logger) {
     logger.log("Core " + std::to_string(coreId) + " simulation started.");
     // Write data into L1.
     for (size_t i = 0; i < l1Cache.getCache().size(); ++i) {
@@ -39,7 +39,7 @@ void coreSimulation(int coreId, CacheSimulator &l1Cache, L2Cache &l2Cache, const
 int main(int argc, char *argv[]) {
     // Load configuration from file.
     Config cfg = Config::loadFromFile("config.json");
-    Logger logger("simulation.log");
+    ReadableFlexibleLogger logger("simulation.log");
 
     // Create shared L2 cache.
     L2Cache sharedL2(cfg.l2Size);
