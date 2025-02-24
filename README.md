@@ -26,6 +26,14 @@ This project simulates various cache control and flush optimizations inspired by
 - **Dynamic Build Targets**:
   - The Makefile builds separate executables for each simulation as well as the unified CLI.
   - A `run_all` target executes all simulations sequentially.
+ 
+- **Enhanced Human-Readable Persistent Logging**:
+  - Implements a new logging mechanism (ReadableFlexibleLogger) inspired by advanced persistent logging techniques (CSO-FVB).
+  - Each log entry is written as a single, human-readable text line that includes:
+    - A timestamp and event message.
+    - Computed metadata detailing the "last difference" (formatted as offset=X, bit=Y) between a preinitialized pattern and the new entry.
+    - A validity field that is initially set to "INVALID" and then updated in place to "0xBEEF" once the entry is persisted.
+  - This feature not only provides persistence guarantees with a single flush round-trip but also makes it easy to review and debug logs directly from the text file.
 
 ## Project Structure
 ```text
@@ -42,6 +50,7 @@ This project simulates various cache control and flush optimizations inspired by
 ├── unified_main.cpp               # Unified CLI main (select simulation mode via command-line)
 ├── config.hpp                     # Configuration loader using nlohmann/json (header-only)
 ├── logger.hpp                     # Simple logging facility (header-only)
+├── ReadableFlexibleLogger.hpp     # Enhanced human-readable persistent logger (header-only)
 ├── json.hpp                       # Single-header JSON library (nlohmann/json)
 └── Makefile                       # Build script for all targets and run_all
 ```
@@ -126,4 +135,4 @@ The simulation parameters (cache sizes, latencies, number of cores, etc.) can be
 The configuration is loaded at runtime (used in multi-core simulation, for example) via config.hpp.
 
 ## Acknowledgments
-This project is inspired by research on cache control and persistent memory, including the techniques presented in "Skip It: Take Control of Your Cache!".
+This project is inspired by research on cache control and persistent memory, including the techniques presented in "Skip It: Take Control of Your Cache!" and "Efficient Logging in Non-Volatile Memory by Exploiting Coherency Protocols".
