@@ -8,12 +8,9 @@
 #include <atomic>
 #include <random>
 
-// Extended benchmark: simulate multi-level cache operations.
 void benchmarkMultiLevel(CacheSimulator &l1Cache, L2Cache &l2Cache, bool useSkipOptimization, int numThreads) {
     const size_t numLines = l1Cache.getCache().size();
     std::atomic<size_t> currentIndex(0);
-
-    // Worker function: flush L1 lines then update L2.
     auto worker = [&]() {
         while (true) {
             size_t idx = currentIndex.fetch_add(1);
@@ -33,7 +30,6 @@ void benchmarkMultiLevel(CacheSimulator &l1Cache, L2Cache &l2Cache, bool useSkip
         t.join();
 }
 
-// Worker that simulates random evictions from L1 and updates L2.
 void simulateEvictions(CacheSimulator &l1Cache, L2Cache &l2Cache, int durationMillis) {
     std::default_random_engine generator(static_cast<unsigned>(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::uniform_int_distribution<size_t> distribution(0, l1Cache.getCache().size() - 1);
@@ -46,7 +42,6 @@ void simulateEvictions(CacheSimulator &l1Cache, L2Cache &l2Cache, int durationMi
     }
 }
 
-// Benchmark: persistent counter workload with multi-level flushes.
 void benchmarkPersistentMultiLevel(CacheSimulator &l1Cache, L2Cache &l2Cache, bool useSkipOptimization, int iterations) {
     PersistentCounter counter(l1Cache, 0);
     auto start = std::chrono::steady_clock::now();
@@ -64,15 +59,12 @@ void benchmarkPersistentMultiLevel(CacheSimulator &l1Cache, L2Cache &l2Cache, bo
 }
 
 int main() {
-    const size_t l1Size = 1024; // 1024 cache lines in L1.
-    const size_t l2Size = l1Size; // Same number in L2.
+    const size_t l1Size = 1024;
+    const size_t l2Size = l1Size;
     CacheSimulator l1Cache(l1Size);
     L2Cache l2Cache(l2Size);
     const int numThreads = 4;
 
-    // ----------------------------
-    // Benchmark: Multi-Level Flush
-    // ----------------------------
     std::cout << "=== Benchmark: Multi-Level Flush ===" << std::endl;
     l1Cache.resetCache();
     for (size_t i = 0; i < l1Size; ++i) {
@@ -85,7 +77,6 @@ int main() {
     auto durationNoSkip = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Multi-Level flush without skip: " << durationNoSkip << " ms" << std::endl;
 
-    // Test with skip optimization.
     l1Cache.resetCache();
     for (size_t i = 0; i < l1Size; ++i) {
         l1Cache.getCache()[i].dirty = false;
@@ -97,27 +88,18 @@ int main() {
     auto durationSkip = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Multi-Level flush with skip: " << durationSkip << " ms" << std::endl;
 
-    // ----------------------------
-    // Benchmark: Persistent Counter (Multi-Level)
-    // ----------------------------
     std::cout << "\n=== Benchmark: Persistent Counter (Multi-Level) ===" << std::endl;
     l1Cache.resetCache();
     benchmarkPersistentMultiLevel(l1Cache, l2Cache, false, 1000);
     l1Cache.resetCache();
     benchmarkPersistentMultiLevel(l1Cache, l2Cache, true, 1000);
 
-    // ----------------------------
-    // Simulate Random Evictions
-    // ----------------------------
     std::cout << "\n=== Simulation: Random L1 Evictions ===" << std::endl;
     std::thread evictionThread(simulateEvictions, std::ref(l1Cache), std::ref(l2Cache), 200);
     evictionThread.join();
 
-    // ----------------------------
-    // Print Statistics
-    // ----------------------------
     std::cout << "\n=== Cache Statistics ===" << std::endl;
-    CacheStats &stats = l1Cache.getStats();
+    auto &stats = l1Cache.getStats();
     std::cout << "Flushes performed: " << stats.flushCount << std::endl;
     std::cout << "Clean operations: " << stats.cleanCount << std::endl;
     std::cout << "Evictions: " << stats.evictionCount << std::endl;
@@ -127,4 +109,3 @@ int main() {
 
     return 0;
 }
-

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <fstream>
-#include "json.hpp"  // make sure you have the single-header version of nlohmann/json
+#include "json.hpp"  // single-header version of nlohmann/json
 
 using json = nlohmann::json;
 
@@ -31,4 +31,3 @@ struct Config {
         return cfg;
     }
 };
-

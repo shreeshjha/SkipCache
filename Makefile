@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++14 -O2 -Wall -pthread -I.
+CXXFLAGS = -std=c++17 -O2 -Wall -pthread -I.
 
 # 1) benchmark executable
 BENCH_SOURCES = benchmark.cpp cache_simulator.cpp persistent_data_structure.cpp
@@ -13,13 +13,12 @@ MULTI_OBJS = $(MULTI_SOURCES:.cpp=.o)
 SKIP_SOURCES = extended_benchmark.cpp cache_simulator.cpp multi_level_cache.cpp persistent_data_structure.cpp
 SKIP_OBJS = $(SKIP_SOURCES:.cpp=.o)
 
-# 4) unified_sim (single CLI with multiple modes)
-UNIFIED_SOURCES = unified_main.cpp cache_simulator.cpp multi_level_cache.cpp persistent_data_structure.cpp
+# 4) unified_sim executable (new unified CLI with extra "vectorized" mode)
+UNIFIED_SOURCES = unified_main.cpp cache_simulator.cpp multi_level_cache.cpp persistent_data_structure.cpp vectorized_hash_table.cpp
 UNIFIED_OBJS = $(UNIFIED_SOURCES:.cpp=.o)
 
 all: benchmark multicore_simulation skipcache_advanced unified_sim
 
-# Original three targets
 benchmark: $(BENCH_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(BENCH_OBJS)
 
@@ -29,15 +28,12 @@ multicore_simulation: $(MULTI_OBJS)
 skipcache_advanced: $(SKIP_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(SKIP_OBJS)
 
-# New unified_sim target
 unified_sim: $(UNIFIED_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(UNIFIED_OBJS)
 
-# Generic rule to build object files
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Run all three original executables plus the new unified CLI
 run_all: all
 	@echo "\n=== Running benchmark ==="
 	./benchmark
@@ -52,8 +48,9 @@ run_all: all
 	./unified_sim multi
 	@echo "\n - skipcache mode"
 	./unified_sim skipcache
+	@echo "\n - vectorized mode"
+	./unified_sim vectorized
 
 clean:
 	rm -f benchmark multicore_simulation skipcache_advanced unified_sim \
 	      $(BENCH_OBJS) $(MULTI_OBJS) $(SKIP_OBJS) $(UNIFIED_OBJS)
-

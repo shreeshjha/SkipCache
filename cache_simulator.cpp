@@ -9,42 +9,32 @@ void CacheSimulator::writeLine(size_t index, int value) {
     std::lock_guard<std::mutex> lock(cacheMutex);
     cacheLines[index].data = value;
     cacheLines[index].dirty = true;
-    cacheLines[index].skip = false; // since it's modified now
+    cacheLines[index].skip = false;
 }
 
 int CacheSimulator::readLine(size_t index) {
-    // Simulate a read latency.
     std::this_thread::sleep_for(std::chrono::microseconds(readLatency));
     std::lock_guard<std::mutex> lock(cacheMutex);
     int value = cacheLines[index].data;
-    // For simplicity, if the line is not dirty, count it as a hit.
-    if (!cacheLines[index].dirty) {
+    if (!cacheLines[index].dirty)
         stats.readHits++;
-    } else {
+    else
         stats.readMisses++;
-    }
     return value;
 }
 
 bool CacheSimulator::flushLine(size_t index, bool useSkipOptimization) {
     std::lock_guard<std::mutex> lock(cacheMutex);
     auto &line = cacheLines[index];
-
-    // If a flush is already pending, skip this one.
     if (line.pendingFlush.load()) return false;
-    
-    // If using skip optimization and the line is clean and marked to skip, do nothing.
     if (useSkipOptimization && !line.dirty && line.skip) {
         stats.redundantFlushesSkipped++;
         return false;
     }
-    
     line.pendingFlush.store(true);
-    // Release the lock while simulating latency.
     cacheMutex.unlock();
     std::this_thread::sleep_for(std::chrono::microseconds(flushLatency));
     cacheMutex.lock();
-    
     line.dirty = false;
     line.skip = true;
     line.pendingFlush.store(false);
@@ -109,7 +99,6 @@ void CacheSimulator::resetCache() {
         line.skip = false;
         line.pendingFlush.store(false);
     }
-    // Reset statistics.
     stats.flushCount = 0;
     stats.cleanCount = 0;
     stats.evictionCount = 0;
@@ -137,4 +126,3 @@ void CacheSimulator::setCleanLatency(unsigned microseconds) {
 void CacheSimulator::setReadLatency(unsigned microseconds) {
     readLatency = microseconds;
 }
-
