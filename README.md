@@ -1,27 +1,33 @@
 # SkipCache Simulation Suite
 
-This project simulates various cache control and flush optimizations inspired by the paper "Skip It: Take Control of Your Cache!". It provides multiple simulation modes that demonstrate:
+This project simulates various cache control and flush optimizations inspired by the paper "Skip It: Take Control of Your Cache!" and further enhanced with insights from persistent memory and vectorized data structures research from "NVM: Is it Not Very Meaningful for Databases?" and "Analyzing Vectorized Hash Tables Across CPU Architectures". In addition to simulating cache behavior, the suite now includes a vectorized hash table module inspired by the Bucket-Based Comparison (BBC) design. The project provides multiple simulation modes that demonstrate:
 - **Benchmark Simulation**: A simple cache flush and persistent counter benchmark.
 - **Multi-Core Simulation**: A simulation where each core has its own L1 cache and shares an L2 cache.
-- **SkipCache Advanced Simulation**: Extended benchmarks that simulate redundant flush avoidance.
-- **Unified CLI Simulation**: A single executable (`unified_sim`) that provides a command-line interface to select between different simulation modes.
+- **SkipCache Advanced Simulation**: Extended benchmarks that simulate redundant flush avoidance and multi-level cache operations.
+- **Unified CLI Simulation**: A single executable (`unified_sim`) that provides a command-line interface to select between different simulation modes, including a new vectorized mode for demonstrating batched, vectorized hash table operations.
 
 ## Features
 
 - **Cache Simulation**: 
   - Implements a simple cache model with flush, clean, read, and eviction operations.
   - Tracks statistics such as flush count, clean operations, evictions, redundant flushes skipped, read hits, and read misses.
-  - Supports configurable latencies for flush, clean, and read operations.
+  - Supports configurable latencies for flush, clean, and read operations to mimic different hardware behaviors, including persistent memory modes.
 
 - **Persistent Data Structures**: 
-  - Provides a simple persistent counter that writes through the cache, using flush and memory fence operations.
+  - Provides a persistent counter that uses flush and memory fence operations to simulate persistence through the cache hierarchy.
 
 - **Multi-Level & Multi-Core Simulation**:
   - Models an L1 cache (per core) and a shared L2 cache with slower flush latency.
-  - Demonstrates how cache evictions and inter-level data propagation work.
+  - Demonstrates cache evictions, data propagation between levels, and the impact of flush optimizations.
+
+- **Vectorized Hash Table Module**:
+  - Implements a vectorized hash table inspired by the BBC design.
+  - Uses a batched (simulated vectorized) probing approach with fingerprints to accelerate key insertion and lookup.
+  - Provides an optional vectorized mode in the unified CLI to showcase how hardware-aware data structures can boost performance.
 
 - **Unified Command-Line Interface**:
-  - A single executable (`unified_sim`) that accepts command-line options (`benchmark`, `multi`, `skipcache`) to run different simulations.
+  - A single executable (`unified_sim`) that accepts command-line options (`benchmark`, `multi`, `skipcache`, `vectorized`) to run different simulations.
+  - The new "vectorized" mode demonstrates the functionality of the vectorized hash table.
 
 - **Dynamic Build Targets**:
   - The Makefile builds separate executables for each simulation as well as the unified CLI.
@@ -44,13 +50,16 @@ This project simulates various cache control and flush optimizations inspired by
 ├── persistent_data_structure.hpp  # PersistentCounter declaration
 ├── multi_level_cache.cpp          # Implementation of the L2Cache class
 ├── multi_level_cache.hpp          # L2Cache declaration
+├── vectorized_hash_table.cpp      # Implementation of the vectorized hash table (BBC-inspired)
+├── vectorized_hash_table.hpp      # Declaration of the vectorized hash table module
 ├── benchmark.cpp                  # Benchmark simulation main (standalone)
 ├── multi_core_simulation.cpp      # Multi-core simulation main (standalone)
 ├── extended_benchmark.cpp         # SkipCache advanced simulation main (standalone)
 ├── unified_main.cpp               # Unified CLI main (select simulation mode via command-line)
 ├── config.hpp                     # Configuration loader using nlohmann/json (header-only)
-├── logger.hpp                     # Simple logging facility (header-only)
-├── ReadableFlexibleLogger.hpp     # Enhanced human-readable persistent logger (header-only)
+├── config.json                    # Sample configuration file for simulation parameters
+├── logger.hpp                     # Wrapper for the enhanced human-readable logger
+├── ReadableFlexibleLogger.hpp     # Enhanced human-readable persistent logger implementation
 ├── json.hpp                       # Single-header JSON library (nlohmann/json)
 └── Makefile                       # Build script for all targets and run_all
 ```
@@ -104,6 +113,7 @@ You can run any simulation individually:
 ./unified_sim benchmark
 ./unified_sim multi
 ./unified_sim skipcache
+./unified_sim vectorized
 ```
 
 ### Running All Simulations Sequentially
@@ -135,4 +145,4 @@ The simulation parameters (cache sizes, latencies, number of cores, etc.) can be
 The configuration is loaded at runtime (used in multi-core simulation, for example) via config.hpp.
 
 ## Acknowledgments
-This project is inspired by research on cache control and persistent memory, including the techniques presented in "Skip It: Take Control of Your Cache!" and "Efficient Logging in Non-Volatile Memory by Exploiting Coherency Protocols".
+This project is inspired by research on cache control and persistent memory, including the techniques presented in "Skip It: Take Control of Your Cache!", "Efficient Logging in Non-Volatile Memory by Exploiting Coherency Protocols", "NVM: Is it Not Very Meaningful for Databases?" and "Analyzing Vectorized Hash Tables Across CPU Architectures".
